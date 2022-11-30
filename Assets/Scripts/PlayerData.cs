@@ -61,6 +61,22 @@ public class PlayerData : ScriptableObject
 	[Range(0.01f, 0.5f)] public float coyoteTime; //Grace period after falling off a platform, where you can still jump
 	[Range(0.01f, 0.5f)] public float jumpInputBufferTime; //Grace period after pressing jump where a jump will be automatically performed once the requirements (eg. being grounded) are met.
 
+	[Header("Swing")]
+	public float swingCooldown;
+
+	[Header("Extend")]
+	public float extendDashSpeed;
+	public float extendCooldown;
+	public float timeBetweenExtendedHits;
+
+	[Header("Dash")]
+	public float dashCooldown;
+	public float dashSpeed;
+
+	[Header("Guard")]
+	public float guardCooldown;
+	public int guardHealth;
+
 
 	//Unity Callback, called when the inspector updates
 	private void OnValidate()
