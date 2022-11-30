@@ -45,6 +45,7 @@ public class CharaMov : MonoBehaviour
 	//Jump
 	private bool _isJumpCut;
 	private bool _isJumpFalling;
+	private bool _asDoubleJumped;
 
 	//Wall Jump
 	private float _wallJumpStartTime;
@@ -130,6 +131,8 @@ public class CharaMov : MonoBehaviour
 
 	private void Update()
 	{
+		print(_isJumpFalling);
+
 		#region TIMERS
 		LastOnGroundTime -= Time.deltaTime;
 		LastOnWallTime -= Time.deltaTime;
@@ -220,6 +223,7 @@ public class CharaMov : MonoBehaviour
 			if (Physics2D.OverlapBox(_groundCheckPoint.position, _groundCheckSize, 0, _groundLayer) && !IsJumping) //checks if set box overlaps with ground
 			{
 				LastOnGroundTime = Data.coyoteTime; //if so sets the lastGrounded to coyoteTime
+				_asDoubleJumped = false;
 			}
 
 			//Right Wall Check
@@ -248,6 +252,8 @@ public class CharaMov : MonoBehaviour
 
 			if (!IsWallJumping)
 				_isJumpFalling = true;
+
+			
 		}
 
 		if (IsWallJumping && Time.time - _wallJumpStartTime > Data.wallJumpTime)
@@ -272,6 +278,13 @@ public class CharaMov : MonoBehaviour
 			_isJumpFalling = false;
 			Jump();
 		}
+		if(CanDoubleJump() && LastPressedJumpTime > 0 && !_asDoubleJumped)
+        {
+			DoubleJump();
+			_asDoubleJumped = true;
+
+		}
+
 		//WALL JUMP
 		else if (CanWallJump() && LastPressedJumpTime > 0)
 		{
@@ -299,20 +312,20 @@ public class CharaMov : MonoBehaviour
 		{
 			SetGravityScale(0);
 		}
-		else if (RB.velocity.y < 0 && _moveInput.y < 0)
+		else if (RB.velocity.y < 0 && _moveInput.y < 0 && _asDoubleJumped)
 		{
 			//Much higher gravity if holding down
 			SetGravityScale(Data.gravityScale * Data.fastFallGravityMult);
 			//Caps maximum fall speed, so when falling over large distances we don't accelerate to insanely high speeds
 			RB.velocity = new Vector2(RB.velocity.x, Mathf.Max(RB.velocity.y, -Data.maxFastFallSpeed));
 		}
-		else if (_isJumpCut)
+		else if (_isJumpCut && _asDoubleJumped)
 		{
 			//Higher gravity if jump button released
 			SetGravityScale(Data.gravityScale * Data.jumpCutGravityMult);
 			RB.velocity = new Vector2(RB.velocity.x, Mathf.Max(RB.velocity.y, -Data.maxFallSpeed));
 		}
-		else if ((IsJumping || IsWallJumping || _isJumpFalling) && Mathf.Abs(RB.velocity.y) < Data.jumpHangTimeThreshold)
+		else if ((IsJumping || IsWallJumping || _isJumpFalling || _asDoubleJumped) && Mathf.Abs(RB.velocity.y) < Data.jumpHangTimeThreshold)
 		{
 			SetGravityScale(Data.gravityScale * Data.jumpHangGravityMult);
 		}
@@ -376,7 +389,7 @@ public class CharaMov : MonoBehaviour
 
 	public void OnJumpUpInput()
 	{
-		if (CanJumpCut() || CanWallJumpCut())
+		if (CanJumpCut() || CanWallJumpCut() || !_asDoubleJumped)
 			_isJumpCut = true;
 	}
 
@@ -511,15 +524,45 @@ public class CharaMov : MonoBehaviour
 		LastPressedJumpTime = 0;
 		LastOnGroundTime = 0;
 
+
+
 		#region Perform Jump
 		//We increase the force applied if we are falling
 		//This means we'll always feel like we jump the same amount 
 		//(setting the player's Y velocity to 0 beforehand will likely work the same, but I find this more elegant :D)
+		Data.gravityStrength = -(2 * Data.jumpHeight) / (Data.jumpTimeToApex * Data.jumpTimeToApex);
+		Data.jumpForce = Mathf.Abs(Data.gravityStrength) * Data.jumpTimeToApex;
+
 		float force = Data.jumpForce;
+
 		if (RB.velocity.y < 0)
 			force -= RB.velocity.y;
 
 		RB.AddForce(Vector2.up * force, ForceMode2D.Impulse);
+		#endregion
+	}
+
+	private void DoubleJump()
+    {
+		//Ensures we can't call Jump multiple times from one press
+		LastPressedJumpTime = 0;
+		print("doublesaut");
+		#region Perform Jump
+		//We increase the force applied if we are falling
+		//This means we'll always feel like we jump the same amount 
+		//(setting the player's Y velocity to 0 beforehand will likely work the same, but I find this more elegant :D)
+		/*Data.gravityStrength = -(2 * Data.doubleJumpHeight) / (Data.jumpTimeToApex * Data.jumpTimeToApex);
+		Data.jumpForce = Mathf.Abs(Data.gravityStrength) * Data.jumpTimeToApex;*/
+
+		float force = Data.jumpForce;
+
+		if (RB.velocity.y < 0)
+			force -= RB.velocity.y;
+
+		RB.AddForce(Vector2.up * force, ForceMode2D.Impulse);
+
+		/*Data.gravityStrength = -(2 * Data.jumpHeight) / (Data.jumpTimeToApex * Data.jumpTimeToApex);
+		Data.jumpForce = Mathf.Abs(Data.gravityStrength) * Data.jumpTimeToApex;*/
 		#endregion
 	}
 
@@ -639,6 +682,18 @@ public class CharaMov : MonoBehaviour
 	{
 		return LastOnGroundTime > 0 && !IsJumping;
 	}
+
+	private bool CanDoubleJump()
+    {
+        if (IsJumping || _isJumpFalling && !_asDoubleJumped)
+        {
+			return true;
+        }
+        else
+        {
+			return false;
+        }
+    }
 
 	private bool CanWallJump()
 	{
