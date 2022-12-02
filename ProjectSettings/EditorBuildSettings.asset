@@ -8,4 +8,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/NIveau.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: Assets/Scenes/Fin Perdu.unity
+    guid: 08338f45a88a6ef449924abbf9de8cb4
+  - enabled: 1
+    path: "Assets/Scenes/Fin Gagn\xE9.unity"
+    guid: 86adca7b06e02034787ac3ac5a343c1b
   m_configObjects: {}

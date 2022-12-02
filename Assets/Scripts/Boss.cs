@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Boss : MonoBehaviour
 {
@@ -9,8 +10,12 @@ public class Boss : MonoBehaviour
     public float nbCycles;
     public int numPhase;
 
-    List<string> BaseAttacks = new List<string>();
+    public int bossHealth = 30;
+    
+    public List<GameObject> BaseAttacks = new List<GameObject>();
     List<string> SpecialAttacks = new List<string>();
+
+    GameObject currentAttack;
     
 
 
@@ -18,43 +23,32 @@ public class Boss : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        BaseAttacks.Add("Base1");
-        BaseAttacks.Add("Base2");
         SpecialAttacks.Add("SPECIAL1");
         SpecialAttacks.Add("SPECIAL2");
         SpecialAttacks.Add("SPECIAL3");
 
+
         print("---PHASE 1 ---");
         numPhase = 1;
-        LaunchPhase();
-
-        print("---PHASE 2 ---");
-        numPhase = 2;
-        LaunchPhase();
-
-        print("---PHASE 3 ---");
-        numPhase = 3;
-        LaunchPhase();
-
-
-
-
-
-
-
-
+        StartCoroutine(LaunchPhase());
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(bossHealth <= 0)
+        {
+            SceneManager.LoadScene("Fin Gagné");
+
+        }
 
     }
 
 
     public void LaunchBaseAttack()
     {
-        print(GetRandomItem(BaseAttacks));
+
+        currentAttack = GameObject.Instantiate(GetRandomItem(BaseAttacks));
     }
 
     public void LaunchCurrentSPecialAttack()
@@ -95,36 +89,48 @@ public class Boss : MonoBehaviour
 
 
 
-    public string GetRandomItem(List<string> listToRandomize)
+    public GameObject GetRandomItem(List<GameObject> listToRandomize)
     {
         int randomNum = Random.Range(0, listToRandomize.Count);
-        string RandomItem = listToRandomize[randomNum];
+        GameObject RandomItem = listToRandomize[randomNum];
         return RandomItem;
     }
 
 
-    public void LaunchPhase()
+     IEnumerator LaunchPhase()
     {
         for (int numCycle = 1; numCycle <= nbCycles; numCycle++)
         {
-
+            yield return new WaitForSeconds(3);
             print("Cycle " + numCycle);
             int NbBaseAttack = Random.Range(minBaseAttack, maxBaseAttack + 1);
             print(NbBaseAttack + " attaques avant la spéciale");
             for (int BaseAttack = 1; BaseAttack <= NbBaseAttack; BaseAttack++)
             {
-
                 LaunchBaseAttack();
+                yield return new WaitForSeconds(3);
             }
             if (numCycle != nbCycles)
             {
                 LaunchSpecialAttack(numPhase);
+                yield return new WaitForSeconds(3);
             }
             else
             {
                 LaunchCurrentSPecialAttack();
+                yield return new WaitForSeconds(3);
             }
         }
+        StartCoroutine(LaunchPhase());
+        yield return null;
+    }
+
+
+    public void Damage(int damages)
+    {
+        //prend des dgts
+        bossHealth -= damages;
+        print(bossHealth);
     }
 }
 

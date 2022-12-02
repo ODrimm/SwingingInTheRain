@@ -57,7 +57,6 @@ public class TopFall : MonoBehaviour
         {
             fallingBlocks[i].transform.position = Vector3.Lerp(fallingBlocks[i].transform.position, new Vector3(fallingBlocks[i].transform.position.x, fallingBlocks[i].transform.position.y - maxOffset, fallingBlocks[i].transform.position.z),Time.deltaTime);
             maxPos = spawnPos.transform.position.y - maxOffset;
-            print(maxPos);
             if (fallingBlocks[i].transform.position.y <= maxPos)
             {
                 GameObject.Destroy(fallingBlocks[i]);
