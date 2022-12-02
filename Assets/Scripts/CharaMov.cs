@@ -657,6 +657,12 @@ public class CharaMov : MonoBehaviour
 		{
 			//Degat sur l'objet
 			print(swingHitObject.name + " s'est fait touché par un swing");
+
+			if (swingHitObject.name == "Boss")
+			{
+				print("touché par swing");
+				swingHitObject.GetComponent<Boss>().Damage(1);
+			}
 		}
 
 		IsAttacking = false;
@@ -801,9 +807,16 @@ public class CharaMov : MonoBehaviour
 
 		if (extendHitObject != null)
 		{
-
 			//Degat sur l'objet
+			print(extendHitObject.name + " s'est fait touché par un extend P1");
+
+			if (extendHitObject.name == "Boss")
+			{
+				swingHitObject.GetComponent<Boss>().Damage(1);
+			}
 		}
+
+		
 
 		yield return new WaitForSeconds(Data.timeBetweenExtendedHits - 0.2f);
 		trail.emitting = false;
@@ -811,7 +824,14 @@ public class CharaMov : MonoBehaviour
 		{
 			//Degat sur l'objet
 			print(extendHitObject.name + " s'est fait touché par un extend P2");
+
+			if (extendHitObject.name == "Boss")
+			{
+				swingHitObject.GetComponent<Boss>().Damage(3);
+			}
 		}
+
+		
 
 		yield return new WaitForSeconds(0.2f);
 		IsAttacking = false;

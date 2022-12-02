@@ -18,6 +18,8 @@ public class Brella : MonoBehaviour
     public float wiggleDistance;
     public float wiggleSpeed;
 
+    public bool brellaIsFinished = false;
+
     Transform WiggleSpawnPos;
     Transform WaterLoadSpawnPos;
 
@@ -27,8 +29,7 @@ public class Brella : MonoBehaviour
         
         WiggleSpawnPos = wiggleSpawn.transform;
         WaterLoadSpawnPos = WaterLoadSpawn.transform;
-        print("WiggleSpawnPos = " + wiggleBrella.transform);
-        print("WaterLoadSpawnPos = " + WaterLoadBrella.transform);
+  
         StartCoroutine(LaunchAttack());
         
     }
@@ -61,6 +62,8 @@ public class Brella : MonoBehaviour
 
         yield return new WaitForSeconds(waterLoadDuration);
         GameObject.Destroy(waterLoad);
-
+        GameObject.Destroy(gameObject);
+        brellaIsFinished = true;
     }
+
 }
