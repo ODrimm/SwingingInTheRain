@@ -131,7 +131,6 @@ public class CharaMov : MonoBehaviour
 
 	private void Update()
 	{
-		print(_isJumpFalling);
 
 		#region TIMERS
 		LastOnGroundTime -= Time.deltaTime;
@@ -546,7 +545,6 @@ public class CharaMov : MonoBehaviour
     {
 		//Ensures we can't call Jump multiple times from one press
 		LastPressedJumpTime = 0;
-		print("doublesaut");
 		#region Perform Jump
 		//We increase the force applied if we are falling
 		//This means we'll always feel like we jump the same amount 
