@@ -21,6 +21,8 @@ public class CharaMov : MonoBehaviour
 	InputAction dodge;
 	InputAction guard;
 
+	[SerializeField] Animator anims;
+
 
 	#region Variables
 	//Components
@@ -87,6 +89,10 @@ public class CharaMov : MonoBehaviour
 	[Header("Layers & Tags")]
 	[SerializeField] private LayerMask _groundLayer;
 	[SerializeField] private LayerMask _ennemyLayer;
+
+	[Space(20)]
+
+	[SerializeField] private TrailRenderer trail;
 	#endregion
 
 	private void Awake()
@@ -127,11 +133,11 @@ public class CharaMov : MonoBehaviour
 	{
 		SetGravityScale(Data.gravityScale);
 		IsFacingRight = true;
+		trail.emitting = false;
 	}
 
 	private void Update()
 	{
-
 		#region TIMERS
 		LastOnGroundTime -= Time.deltaTime;
 		LastOnWallTime -= Time.deltaTime;
@@ -141,6 +147,12 @@ public class CharaMov : MonoBehaviour
 		LastPressedJumpTime -= Time.deltaTime;
 		#endregion
 
+		if(Time.time - LastPressedDashTime > 1 && !IsJumping && !_isJumpFalling)
+        {
+			trail.emitting = false;
+		}
+
+
 		#region INPUT HANDLER
 		if (CanMove())
 		{
@@ -148,10 +160,21 @@ public class CharaMov : MonoBehaviour
 			_moveInput.y = move.ReadValue<Vector2>().y;
 
 			if (_moveInput.x != 0)
+            {
 				CheckDirectionToFace(_moveInput.x > 0);
+				anims.SetBool("Run", true);
+			}
+            else
+            {
+				anims.SetBool("Run", false);
+
+			}
+
+
 		}
 		else
 		{
+			anims.SetBool("Run", false);
 			_moveInput.x = 0;
 			_moveInput.y = 0;
 		}
@@ -263,6 +286,7 @@ public class CharaMov : MonoBehaviour
 		if (LastOnGroundTime > 0 && !IsJumping && !IsWallJumping)
 		{
 			_isJumpCut = false;
+			anims.SetBool("Jump", false);
 
 			if (!IsJumping)
 				_isJumpFalling = false;
@@ -523,7 +547,7 @@ public class CharaMov : MonoBehaviour
 		LastPressedJumpTime = 0;
 		LastOnGroundTime = 0;
 
-
+		anims.SetBool("Jump", true);
 
 		#region Perform Jump
 		//We increase the force applied if we are falling
@@ -539,12 +563,18 @@ public class CharaMov : MonoBehaviour
 
 		RB.AddForce(Vector2.up * force, ForceMode2D.Impulse);
 		#endregion
+
+		trail.emitting = true;
+		trail.startWidth = 0.09f;
+		trail.endWidth = 0f;
 	}
 
 	private void DoubleJump()
     {
 		//Ensures we can't call Jump multiple times from one press
 		LastPressedJumpTime = 0;
+		anims.SetTrigger("JumpDouble");
+
 		#region Perform Jump
 		//We increase the force applied if we are falling
 		//This means we'll always feel like we jump the same amount 
@@ -605,18 +635,26 @@ public class CharaMov : MonoBehaviour
 
 	private void Dodge()
     {
-		RB.AddForce(new Vector2(RB.velocity.x * Data.dashSpeed, 0));
+		trail.emitting = true;
+		trail.startWidth = 0.09f;
+		trail.endWidth = 0f;
+		anims.SetTrigger("Dash");
 		LastPressedDashTime = Time.time;
+		RB.AddForce(new Vector2(RB.velocity.normalized.x * Data.dashSpeed, 0), ForceMode2D.Force);
+		//RB.velocity += new Vector2(RB.velocity.x * Data.dashSpeed, 0);
+		
 	}
-    #endregion
+	#endregion
 
-    #region ATTACK METHODS
+	#region ATTACK METHODS
 
 	private void Swing()
     {
 		//Swing
 		IsAttacking= true;
 		//ANIM ICI
+		anims.SetTrigger("Swing");
+
 		if (swingHitObject != null)
 		{
 			//Degat sur l'objet
@@ -634,6 +672,8 @@ public class CharaMov : MonoBehaviour
 		//RB.velocity = new Vector2(RB.velocity.x - RB.velocity.x, RB.velocity.y);
 
 		//Anims
+		anims.SetTrigger("Extend");
+
 
 		StartCoroutine(ExtendCoroutine());
 		

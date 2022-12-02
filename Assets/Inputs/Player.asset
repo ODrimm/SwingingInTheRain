@@ -43,11 +43,12 @@ MonoBehaviour:
   slideAccel: 12
   coyoteTime: 0.2
   jumpInputBufferTime: 0.2
-  swingCooldown: 0.6
+  swingCooldown: 0.3
   extendDashSpeed: 1200
   extendCooldown: 0
-  timeBetweenExtendedHits: 1.5
-  dashCooldown: 0.1
-  dashSpeed: 1000
+  timeBetweenExtendedHits: 0.96
+  dashCooldown: 0.6
+  dashSpeed: 10000
+  dashLength: 0
   guardCooldown: 0
   guardHealth: 5
