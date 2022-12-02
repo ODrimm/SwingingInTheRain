@@ -16,6 +16,12 @@ public class CharaMov : MonoBehaviour
 	PlayerInputs inputActions;
 	InputAction move;
 	InputAction jump;
+	InputAction attack;
+	InputAction special;
+	InputAction dodge;
+	InputAction guard;
+
+	[SerializeField] Animator anims;
 
 
 	#region Variables
@@ -29,6 +35,8 @@ public class CharaMov : MonoBehaviour
 	public bool IsJumping { get; private set; }
 	public bool IsWallJumping { get; private set; }
 	public bool IsSliding { get; private set; }
+	public bool IsAttacking { get; private set; }
+	public bool BlockedMovement { get; private set; }
 
 	//Timers (also all fields, could be private and a method returning a bool could be used)
 	public float LastOnGroundTime { get; private set; }
@@ -39,13 +47,26 @@ public class CharaMov : MonoBehaviour
 	//Jump
 	private bool _isJumpCut;
 	private bool _isJumpFalling;
+	private bool _asDoubleJumped;
 
 	//Wall Jump
 	private float _wallJumpStartTime;
 	private int _lastWallJumpDir;
 
+	//Attack
+	private Collider2D swingHitObject;
+
+	private Collider2D extendHitObject;
+
 	private Vector2 _moveInput;
 	public float LastPressedJumpTime { get; private set; }
+	
+	float LastPressedSwingTime;
+	float LastPressedExtendTime;
+	float LastPressedDashTime;
+	float LastBrokenShieldTime;
+
+
 
 	//Set all of these up in the inspector
 	[Header("Checks")]
@@ -56,16 +77,28 @@ public class CharaMov : MonoBehaviour
 	[SerializeField] private Transform _frontWallCheckPoint;
 	[SerializeField] private Transform _backWallCheckPoint;
 	[SerializeField] private Vector2 _wallCheckSize = new Vector2(0.5f, 1f);
+	[Space(5)]
+	[SerializeField] private Transform _swingHitPoint;
+	[SerializeField] private Vector2 _swingCheckSize = new Vector2(0.5f, 1f);
+	[Space(5)]
+	[SerializeField] private Transform _extendHitPoint;
+	[SerializeField] private Vector2 _extendCheckSize = new Vector2(0.5f, 1f);
+	[Space(5)]
+	[SerializeField] private GameObject _shieldPoint;
 
 	[Header("Layers & Tags")]
 	[SerializeField] private LayerMask _groundLayer;
+	[SerializeField] private LayerMask _ennemyLayer;
+
+	[Space(20)]
+
+	[SerializeField] private TrailRenderer trail;
 	#endregion
 
 	private void Awake()
 	{
 		RB = GetComponent<Rigidbody2D>();
 		inputActions = new PlayerInputs();
-
 	}
 
 	private void OnEnable()
@@ -75,6 +108,14 @@ public class CharaMov : MonoBehaviour
 		move.Enable();
 		jump = inputActions.Player.Jump;
 		jump.Enable();
+		attack = inputActions.Player.Attack;
+		attack.Enable();
+		special = inputActions.Player.Special;
+		special.Enable();
+		dodge = inputActions.Player.Dodge;
+		dodge.Enable();
+		guard = inputActions.Player.Guard;
+		guard.Enable();
 	}
 
 	private void OnDisable()
@@ -82,12 +123,17 @@ public class CharaMov : MonoBehaviour
 		inputActions.Disable();
 		move.Disable();
 		jump.Disable();
+		attack.Disable();
+		special.Disable();
+		dodge.Disable();
+		guard.Disable();
 	}
 
 	private void Start()
 	{
 		SetGravityScale(Data.gravityScale);
 		IsFacingRight = true;
+		trail.emitting = false;
 	}
 
 	private void Update()
@@ -101,14 +147,40 @@ public class CharaMov : MonoBehaviour
 		LastPressedJumpTime -= Time.deltaTime;
 		#endregion
 
+		if(Time.time - LastPressedDashTime > 1 && !IsJumping && !_isJumpFalling)
+        {
+			trail.emitting = false;
+		}
+
+
 		#region INPUT HANDLER
-		_moveInput.x = move.ReadValue<Vector2>().x;
-		_moveInput.y = move.ReadValue<Vector2>().y;
+		if (CanMove())
+		{
+			_moveInput.x = move.ReadValue<Vector2>().x;
+			_moveInput.y = move.ReadValue<Vector2>().y;
 
-		if (_moveInput.x != 0)
-			CheckDirectionToFace(_moveInput.x > 0);
+			if (_moveInput.x != 0)
+            {
+				CheckDirectionToFace(_moveInput.x > 0);
+				anims.SetBool("Run", true);
+			}
+            else
+            {
+				anims.SetBool("Run", false);
 
-		if (jump.WasPressedThisFrame())
+			}
+
+
+		}
+		else
+		{
+			anims.SetBool("Run", false);
+			_moveInput.x = 0;
+			_moveInput.y = 0;
+		}
+
+		//Jump
+		if (jump.WasPressedThisFrame() && CanMove())
 		{
 			OnJumpInput();
 		}
@@ -117,6 +189,53 @@ public class CharaMov : MonoBehaviour
 		{
 			OnJumpUpInput();
 		}
+
+		//Dodge
+		if (dodge.WasPressedThisFrame() && CanMove())
+		{
+			OnDodgeInput();
+		}
+
+		if (dodge.WasReleasedThisFrame())
+		{
+			OnDodgeUpInput();
+		}
+
+		//Swing
+		if (attack.WasPressedThisFrame() && CanMove())
+		{
+			OnAttackInput();
+		}
+
+		if (attack.WasReleasedThisFrame())
+		{
+			OnAttackUpInput();
+		}
+
+		//Special
+		if (special.WasPressedThisFrame() && CanMove())
+		{
+			OnSpecialInput();
+		}
+
+		if (special.WasReleasedThisFrame())
+		{
+			OnSpecialUpInput();
+		}
+
+		//Guard
+		if (guard.WasPressedThisFrame() && CanMove())
+		{
+			OnGuardInput();
+		}
+
+		if (guard.WasReleasedThisFrame())
+		{
+			OnGuardUpInput();
+		}
+
+		
+
 		#endregion
 
 		#region COLLISION CHECKS
@@ -126,6 +245,7 @@ public class CharaMov : MonoBehaviour
 			if (Physics2D.OverlapBox(_groundCheckPoint.position, _groundCheckSize, 0, _groundLayer) && !IsJumping) //checks if set box overlaps with ground
 			{
 				LastOnGroundTime = Data.coyoteTime; //if so sets the lastGrounded to coyoteTime
+				_asDoubleJumped = false;
 			}
 
 			//Right Wall Check
@@ -140,7 +260,11 @@ public class CharaMov : MonoBehaviour
 
 			//Two checks needed for both left and right walls since whenever the play turns the wall checkPoints swap sides
 			LastOnWallTime = Mathf.Max(LastOnWallLeftTime, LastOnWallRightTime);
+
 		}
+		
+		
+
 		#endregion
 
 		#region JUMP CHECKS
@@ -150,6 +274,8 @@ public class CharaMov : MonoBehaviour
 
 			if (!IsWallJumping)
 				_isJumpFalling = true;
+
+			
 		}
 
 		if (IsWallJumping && Time.time - _wallJumpStartTime > Data.wallJumpTime)
@@ -160,6 +286,7 @@ public class CharaMov : MonoBehaviour
 		if (LastOnGroundTime > 0 && !IsJumping && !IsWallJumping)
 		{
 			_isJumpCut = false;
+			anims.SetBool("Jump", false);
 
 			if (!IsJumping)
 				_isJumpFalling = false;
@@ -174,6 +301,13 @@ public class CharaMov : MonoBehaviour
 			_isJumpFalling = false;
 			Jump();
 		}
+		if(CanDoubleJump() && LastPressedJumpTime > 0 && !_asDoubleJumped)
+        {
+			DoubleJump();
+			_asDoubleJumped = true;
+
+		}
+
 		//WALL JUMP
 		else if (CanWallJump() && LastPressedJumpTime > 0)
 		{
@@ -201,20 +335,20 @@ public class CharaMov : MonoBehaviour
 		{
 			SetGravityScale(0);
 		}
-		else if (RB.velocity.y < 0 && _moveInput.y < 0)
+		else if (RB.velocity.y < 0 && _moveInput.y < 0 && _asDoubleJumped)
 		{
 			//Much higher gravity if holding down
 			SetGravityScale(Data.gravityScale * Data.fastFallGravityMult);
 			//Caps maximum fall speed, so when falling over large distances we don't accelerate to insanely high speeds
 			RB.velocity = new Vector2(RB.velocity.x, Mathf.Max(RB.velocity.y, -Data.maxFastFallSpeed));
 		}
-		else if (_isJumpCut)
+		else if (_isJumpCut && _asDoubleJumped)
 		{
 			//Higher gravity if jump button released
 			SetGravityScale(Data.gravityScale * Data.jumpCutGravityMult);
 			RB.velocity = new Vector2(RB.velocity.x, Mathf.Max(RB.velocity.y, -Data.maxFallSpeed));
 		}
-		else if ((IsJumping || IsWallJumping || _isJumpFalling) && Mathf.Abs(RB.velocity.y) < Data.jumpHangTimeThreshold)
+		else if ((IsJumping || IsWallJumping || _isJumpFalling || _asDoubleJumped) && Mathf.Abs(RB.velocity.y) < Data.jumpHangTimeThreshold)
 		{
 			SetGravityScale(Data.gravityScale * Data.jumpHangGravityMult);
 		}
@@ -235,15 +369,38 @@ public class CharaMov : MonoBehaviour
 
 	private void FixedUpdate()
 	{
-		//Handle Run
+        //Handle Run
 		if (IsWallJumping)
 			Run(Data.wallJumpRunLerp);
 		else
 			Run(1);
+		
+		
 
 		//Handle Slide
 		if (IsSliding)
 			Slide();
+
+		if (Physics2D.OverlapBox(_swingHitPoint.position, _swingCheckSize, 0, _ennemyLayer))
+		{
+			Collider2D collider = Physics2D.OverlapBox(_swingHitPoint.position, _swingCheckSize, 0, _ennemyLayer);
+			swingHitObject = collider;
+		}
+		else
+		{
+			swingHitObject = null;
+		}
+
+		if (Physics2D.OverlapBox(_extendHitPoint.position, _extendCheckSize, 0, _ennemyLayer))
+		{
+			Collider2D collider = Physics2D.OverlapBox(_extendHitPoint.position, _extendCheckSize, 0, _ennemyLayer);
+			extendHitObject = collider;
+		}
+		else
+		{
+			extendHitObject = null;
+		}
+
 	}
 
 	#region INPUT CALLBACKS
@@ -255,8 +412,58 @@ public class CharaMov : MonoBehaviour
 
 	public void OnJumpUpInput()
 	{
-		if (CanJumpCut() || CanWallJumpCut())
+		if (CanJumpCut() || CanWallJumpCut() || !_asDoubleJumped)
 			_isJumpCut = true;
+	}
+
+	public void OnDodgeInput()
+	{
+		
+        if (CanDodge())
+        {
+			Dodge();
+        }
+	}
+
+	public void OnDodgeUpInput()
+	{
+		
+	}
+
+	public void OnAttackInput()
+    {
+		if(CanSwing())
+		{
+			Swing();
+		}
+	}
+	public void OnAttackUpInput()
+	{
+        
+	}
+
+	public void OnSpecialInput()
+	{
+		if (CanExtend())
+		{
+			Extend();
+		}
+	}
+	public void OnSpecialUpInput()
+	{
+
+	}
+
+	public void OnGuardInput()
+	{
+		if (CanGuard())
+		{
+			Guard();
+		}
+	}
+	public void OnGuardUpInput()
+	{
+		GuardUp();
 	}
 	#endregion
 
@@ -340,15 +547,50 @@ public class CharaMov : MonoBehaviour
 		LastPressedJumpTime = 0;
 		LastOnGroundTime = 0;
 
+		anims.SetBool("Jump", true);
+
 		#region Perform Jump
 		//We increase the force applied if we are falling
 		//This means we'll always feel like we jump the same amount 
 		//(setting the player's Y velocity to 0 beforehand will likely work the same, but I find this more elegant :D)
+		Data.gravityStrength = -(2 * Data.jumpHeight) / (Data.jumpTimeToApex * Data.jumpTimeToApex);
+		Data.jumpForce = Mathf.Abs(Data.gravityStrength) * Data.jumpTimeToApex;
+
 		float force = Data.jumpForce;
+
 		if (RB.velocity.y < 0)
 			force -= RB.velocity.y;
 
 		RB.AddForce(Vector2.up * force, ForceMode2D.Impulse);
+		#endregion
+
+		trail.emitting = true;
+		trail.startWidth = 0.09f;
+		trail.endWidth = 0f;
+	}
+
+	private void DoubleJump()
+    {
+		//Ensures we can't call Jump multiple times from one press
+		LastPressedJumpTime = 0;
+		anims.SetTrigger("JumpDouble");
+
+		#region Perform Jump
+		//We increase the force applied if we are falling
+		//This means we'll always feel like we jump the same amount 
+		//(setting the player's Y velocity to 0 beforehand will likely work the same, but I find this more elegant :D)
+		/*Data.gravityStrength = -(2 * Data.doubleJumpHeight) / (Data.jumpTimeToApex * Data.jumpTimeToApex);
+		Data.jumpForce = Mathf.Abs(Data.gravityStrength) * Data.jumpTimeToApex;*/
+
+		float force = Data.jumpForce;
+
+		if (RB.velocity.y < 0)
+			force -= RB.velocity.y;
+
+		RB.AddForce(Vector2.up * force, ForceMode2D.Impulse);
+
+		/*Data.gravityStrength = -(2 * Data.jumpHeight) / (Data.jumpTimeToApex * Data.jumpTimeToApex);
+		Data.jumpForce = Mathf.Abs(Data.gravityStrength) * Data.jumpTimeToApex;*/
 		#endregion
 	}
 
@@ -375,10 +617,10 @@ public class CharaMov : MonoBehaviour
 		RB.AddForce(force, ForceMode2D.Impulse);
 		#endregion
 	}
-	#endregion
+    #endregion
 
-	#region OTHER MOVEMENT METHODS
-	private void Slide()
+    #region OTHER MOVEMENT METHODS
+    private void Slide()
 	{
 		//Works the same as the Run but only in the y-axis
 		//THis seems to work fine, buit maybe you'll find a better way to implement a slide into this system
@@ -390,8 +632,75 @@ public class CharaMov : MonoBehaviour
 
 		RB.AddForce(movement * Vector2.up);
 	}
+
+	private void Dodge()
+    {
+		trail.emitting = true;
+		trail.startWidth = 0.09f;
+		trail.endWidth = 0f;
+		anims.SetTrigger("Dash");
+		LastPressedDashTime = Time.time;
+		RB.AddForce(new Vector2(RB.velocity.normalized.x * Data.dashSpeed, 0), ForceMode2D.Force);		
+	}
 	#endregion
 
+	#region ATTACK METHODS
+
+	private void Swing()
+    {
+		//Swing
+		IsAttacking= true;
+		//ANIM ICI
+		anims.SetTrigger("Swing");
+
+		if (swingHitObject != null)
+		{
+			//Degat sur l'objet
+			print(swingHitObject.name + " s'est fait touché par un swing");
+		}
+
+		IsAttacking = false;
+		LastPressedSwingTime = Time.time;
+	}
+
+	private void Extend()
+    {
+		IsAttacking = true;
+		BlockedMovement = true;
+		//RB.velocity = new Vector2(RB.velocity.x - RB.velocity.x, RB.velocity.y);
+
+		//Anims
+		anims.SetTrigger("Extend");
+
+
+		StartCoroutine(ExtendCoroutine());
+		
+	}
+
+	private void Guard()
+    {
+		IsAttacking = true;
+		BlockedMovement = true;
+		int guardHealth = Data.guardHealth;
+		//Anim
+
+		_shieldPoint.GetComponent<Collider2D>().enabled = true;
+		print(guardHealth);
+		if(guardHealth <= 0)
+        {
+			GuardUp();
+        }
+	}
+
+	private void GuardUp()
+    {
+		_shieldPoint.GetComponent<Collider2D>().enabled = false;
+		IsAttacking = false;
+		BlockedMovement = false;
+
+
+	}
+	#endregion
 
 	#region CHECK METHODS
 	public void CheckDirectionToFace(bool isMovingRight)
@@ -400,10 +709,27 @@ public class CharaMov : MonoBehaviour
 			Turn();
 	}
 
+	private bool CanMove()
+    {
+		return !BlockedMovement;
+    }
+
 	private bool CanJump()
 	{
 		return LastOnGroundTime > 0 && !IsJumping;
 	}
+
+	private bool CanDoubleJump()
+    {
+        if (IsJumping || _isJumpFalling && !_asDoubleJumped)
+        {
+			return true;
+        }
+        else
+        {
+			return false;
+        }
+    }
 
 	private bool CanWallJump()
 	{
@@ -428,17 +754,88 @@ public class CharaMov : MonoBehaviour
 		else
 			return false;
 	}
+
+	public bool CanDodge()
+    {
+		if (!BlockedMovement && !IsAttacking && Time.time - LastPressedDashTime > Data.dashCooldown)
+			return true;
+		else 
+			return false;
+    }
+
+	public bool CanSwing()
+    {
+		if (Time.time - LastPressedSwingTime > Data.swingCooldown && !IsAttacking)
+		{
+			return true;
+		}
+		else return false;
+    }
+
+	public bool CanExtend()
+	{
+		if (Time.time - LastPressedExtendTime > Data.extendCooldown && !IsAttacking && !IsJumping && !_isJumpFalling)
+		{
+			return true;
+		}
+		else return false;
+	}
+
+	public bool CanGuard()
+	{
+		if (Time.time - LastBrokenShieldTime > Data.guardCooldown && !IsAttacking && !IsJumping && !_isJumpFalling)
+		{
+			return true;
+		}
+		else return false;
+	}
 	#endregion
 
+	#region COROUTINES
+	IEnumerator ExtendCoroutine()
+	{
+		trail.emitting = true;
+		trail.startWidth = 0.09f;
+		trail.endWidth = 0f;
+		RB.AddForce(new Vector2(Data.extendDashSpeed * Mathf.Sign(transform.localScale.x), 0));
 
-	#region EDITOR METHODS
-	private void OnDrawGizmosSelected()
+		if (extendHitObject != null)
+		{
+
+			//Degat sur l'objet
+		}
+
+		yield return new WaitForSeconds(Data.timeBetweenExtendedHits - 0.2f);
+		trail.emitting = false;
+		if (extendHitObject != null)
+		{
+			//Degat sur l'objet
+			print(extendHitObject.name + " s'est fait touché par un extend P2");
+		}
+
+		yield return new WaitForSeconds(0.2f);
+		IsAttacking = false;
+		BlockedMovement = false;
+		
+		yield return null;
+	}
+    #endregion
+
+    #region EDITOR METHODS
+    private void OnDrawGizmosSelected()
 	{
 		Gizmos.color = Color.green;
 		Gizmos.DrawWireCube(_groundCheckPoint.position, _groundCheckSize);
 		Gizmos.color = Color.blue;
 		Gizmos.DrawWireCube(_frontWallCheckPoint.position, _wallCheckSize);
 		Gizmos.DrawWireCube(_backWallCheckPoint.position, _wallCheckSize);
+		Gizmos.color = Color.red;
+		Gizmos.DrawWireCube(_swingHitPoint.position, _swingCheckSize);
+		Gizmos.color = Color.cyan;
+		Gizmos.DrawWireCube(_extendHitPoint.position, _extendCheckSize);
+
+		Gizmos.color = Color.black;
+		Gizmos.DrawWireCube(_shieldPoint.transform.position, _shieldPoint.transform.lossyScale);
 	}
 	#endregion
 }

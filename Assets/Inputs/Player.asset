@@ -14,23 +14,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gravityStrength: -52
   gravityScale: 5.3007135
-  fallGravityMult: 2
-  maxFallSpeed: 22
-  fastFallGravityMult: 2
+  fallGravityMult: 1
+  maxFallSpeed: 15.19
+  fastFallGravityMult: 1
   maxFastFallSpeed: 22
   runMaxSpeed: 9.5
   runAcceleration: 9.5
   runAccelAmount: 50
-  runDecceleration: 9.5
-  runDeccelAmount: 50
+  runDecceleration: 4.81
+  runDeccelAmount: 25.315788
   accelInAir: 1
-  deccelInAir: 1
+  deccelInAir: 0.04
   doConserveMomentum: 0
   jumpHeight: 6.5
+  doubleJumpHeight: 6.5
   jumpTimeToApex: 0.5
   jumpForce: 26
-  jumpCutGravityMult: 3.5
-  jumpHangGravityMult: 1
+  jumpCutGravityMult: 1.9
+  jumpHangGravityMult: 0.686
   jumpHangTimeThreshold: 0
   jumpHangAccelerationMult: 1
   jumpHangMaxSpeedMult: 1
@@ -42,3 +43,12 @@ MonoBehaviour:
   slideAccel: 12
   coyoteTime: 0.2
   jumpInputBufferTime: 0.2
+  swingCooldown: 0.3
+  extendDashSpeed: 1200
+  extendCooldown: 0
+  timeBetweenExtendedHits: 0.96
+  dashCooldown: 0.6
+  dashSpeed: 10000
+  dashLength: 0
+  guardCooldown: 0
+  guardHealth: 5
