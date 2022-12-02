@@ -35,7 +35,6 @@ public class PlayerDamages : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        print("hit");
 
         if (collision.gameObject.tag == "smallHit")
         {
