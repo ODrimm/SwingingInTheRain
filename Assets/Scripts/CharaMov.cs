@@ -147,7 +147,7 @@ public class CharaMov : MonoBehaviour
 		LastPressedJumpTime -= Time.deltaTime;
 		#endregion
 
-		if(Time.time - LastPressedDashTime > 1)
+		if(Time.time - LastPressedDashTime > 1 && !IsJumping && !_isJumpFalling)
         {
 			trail.emitting = false;
 		}
@@ -563,6 +563,10 @@ public class CharaMov : MonoBehaviour
 
 		RB.AddForce(Vector2.up * force, ForceMode2D.Impulse);
 		#endregion
+
+		trail.emitting = true;
+		trail.startWidth = 0.09f;
+		trail.endWidth = 0f;
 	}
 
 	private void DoubleJump()
@@ -632,6 +636,8 @@ public class CharaMov : MonoBehaviour
 	private void Dodge()
     {
 		trail.emitting = true;
+		trail.startWidth = 0.09f;
+		trail.endWidth = 0f;
 		anims.SetTrigger("Dash");
 		LastPressedDashTime = Time.time;
 		RB.AddForce(new Vector2(RB.velocity.normalized.x * Data.dashSpeed, 0), ForceMode2D.Force);
@@ -666,6 +672,8 @@ public class CharaMov : MonoBehaviour
 		//RB.velocity = new Vector2(RB.velocity.x - RB.velocity.x, RB.velocity.y);
 
 		//Anims
+		anims.SetTrigger("Extend");
+
 
 		StartCoroutine(ExtendCoroutine());
 		
