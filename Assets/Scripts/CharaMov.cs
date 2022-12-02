@@ -640,9 +640,7 @@ public class CharaMov : MonoBehaviour
 		trail.endWidth = 0f;
 		anims.SetTrigger("Dash");
 		LastPressedDashTime = Time.time;
-		RB.AddForce(new Vector2(RB.velocity.normalized.x * Data.dashSpeed, 0), ForceMode2D.Force);
-		//RB.velocity += new Vector2(RB.velocity.x * Data.dashSpeed, 0);
-		
+		RB.AddForce(new Vector2(RB.velocity.normalized.x * Data.dashSpeed, 0), ForceMode2D.Force);		
 	}
 	#endregion
 
@@ -796,6 +794,9 @@ public class CharaMov : MonoBehaviour
 	#region COROUTINES
 	IEnumerator ExtendCoroutine()
 	{
+		trail.emitting = true;
+		trail.startWidth = 0.09f;
+		trail.endWidth = 0f;
 		RB.AddForce(new Vector2(Data.extendDashSpeed * Mathf.Sign(transform.localScale.x), 0));
 
 		if (extendHitObject != null)
@@ -805,7 +806,7 @@ public class CharaMov : MonoBehaviour
 		}
 
 		yield return new WaitForSeconds(Data.timeBetweenExtendedHits - 0.2f);
-		
+		trail.emitting = false;
 		if (extendHitObject != null)
 		{
 			//Degat sur l'objet
