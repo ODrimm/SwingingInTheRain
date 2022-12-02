@@ -4,15 +4,33 @@ using UnityEngine;
 
 public class Brella : MonoBehaviour
 {
+    
     [Space(10)]
-    [SerializeField] GameObject block;
+    [SerializeField] GameObject wiggleBrella;
+    [SerializeField] GameObject WaterLoadBrella;
     [Space(10)]
-    Transform spawnPos;
+    public GameObject wiggleSpawn;
+    public GameObject WaterLoadSpawn;
+    [Space(10)]
+    public float waterLoadDuration;
+    [Space(10)]
+    public float wiggleDuration;
+    public float wiggleDistance;
+    public float wiggleSpeed;
+
+    Transform WiggleSpawnPos;
+    Transform WaterLoadSpawnPos;
 
 
     private void Awake()
     {
-        StartCoroutine(Wiggle());
+        
+        WiggleSpawnPos = wiggleSpawn.transform;
+        WaterLoadSpawnPos = WaterLoadSpawn.transform;
+        print("WiggleSpawnPos = " + wiggleBrella.transform);
+        print("WaterLoadSpawnPos = " + WaterLoadBrella.transform);
+        StartCoroutine(LaunchAttack());
+        
     }
     // Start is called before the first frame update
     void Start()
@@ -26,18 +44,23 @@ public class Brella : MonoBehaviour
         
     }
 
-
-
-    /*private GameObject BlockFall(Transform pos)
+    GameObject InstanciateBrella(GameObject gameObject, Transform spawnPos)
     {
-        spawnPos = pos;
-        spawnPos.position = new Vector2(spawnPos.position.x, spawnPos.position.y + spawnOffset);
-        return GameObject.Instantiate(block, spawnPos);
-    }*/
+        return GameObject.Instantiate(gameObject, spawnPos);
+    }
+ 
 
-     IEnumerator Wiggle()
+     IEnumerator LaunchAttack()
     {
+        GameObject wiggle = InstanciateBrella(wiggleBrella, WiggleSpawnPos);
+        wiggle.transform.parent = gameObject.transform;
+        yield return new WaitForSeconds(wiggleDuration);
+        GameObject.Destroy(wiggle);
+        GameObject waterLoad = InstanciateBrella(WaterLoadBrella, WaterLoadSpawnPos);
+        waterLoad.transform.parent = gameObject.transform;
 
-        yield return null;
+        yield return new WaitForSeconds(waterLoadDuration);
+        GameObject.Destroy(waterLoad);
+
     }
 }
