@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: e54618ef5393e8a4f96cfe70fe68209f
+guid: e88ed66ba4cfc724cbf4c54c7e0de64e
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -105,12 +105,12 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Jump_Player_0
+      name: JumpDouble_Player_0
       rect:
         serializedVersion: 2
         x: 0
         y: 176
-        width: 256
+        width: 384
         height: 176
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -119,19 +119,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fb93e2b6d4c76624db7590a95b55b3d2
-      internalID: -1137448150
+      spriteID: 31059b3f7c25ec54baa7146f2c3c2c42
+      internalID: 466022877
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Jump_Player_1
+      name: JumpDouble_Player_1
       rect:
         serializedVersion: 2
-        x: 256
+        x: 384
         y: 176
-        width: 256
+        width: 384
         height: 176
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -140,19 +140,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 95bc98a631ad2bd4fae3b365fbff3866
-      internalID: -1183030590
+      spriteID: 2a006a333db97044db2625705fa3822d
+      internalID: -763286467
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Jump_Player_2
+      name: JumpDouble_Player_2
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 256
+        width: 384
         height: 176
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -161,8 +161,29 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4fc07cf825fdfb94ea9144b061c9efc1
-      internalID: 1476979142
+      spriteID: 7a7b4e4b752a2d041a3f969b71e33181
+      internalID: 1272794350
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: JumpDouble_Player_3
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 0
+        width: 384
+        height: 176
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d9af8d79b52124f459386baa5501f2ea
+      internalID: 1290044598
       vertices: []
       indices: 
       edges: []
@@ -178,9 +199,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Jump_Player_0: -1137448150
-      Jump_Player_2: 1476979142
-      Jump_Player_1: -1183030590
+      JumpDouble_Player_3: 1290044598
+      JumpDouble_Player_0: 466022877
+      JumpDouble_Player_2: 1272794350
+      JumpDouble_Player_1: -763286467
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

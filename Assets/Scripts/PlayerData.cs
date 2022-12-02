@@ -73,6 +73,7 @@ public class PlayerData : ScriptableObject
 	[Header("Dash")]
 	public float dashCooldown;
 	public float dashSpeed;
+	public float dashLength;
 
 	[Header("Guard")]
 	public float guardCooldown;

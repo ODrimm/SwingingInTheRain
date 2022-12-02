@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: e54618ef5393e8a4f96cfe70fe68209f
+guid: fd1faa38a0ad69549aaec4077f3de1e3
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -105,64 +105,85 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Jump_Player_0
+      name: DashAir_Player_0
       rect:
         serializedVersion: 2
         x: 0
         y: 176
-        width: 256
+        width: 384
         height: 176
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fb93e2b6d4c76624db7590a95b55b3d2
-      internalID: -1137448150
+      spriteID: e22c893346dbfd943a642285be44b40c
+      internalID: 1738045054
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Jump_Player_1
+      name: DashAir_Player_1
       rect:
         serializedVersion: 2
-        x: 256
+        x: 384
         y: 176
-        width: 256
+        width: 384
         height: 176
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 95bc98a631ad2bd4fae3b365fbff3866
-      internalID: -1183030590
+      spriteID: 487a35aeb9a6e924099fa0a0106dfddb
+      internalID: 861678678
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Jump_Player_2
+      name: DashAir_Player_2
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 256
+        width: 384
         height: 176
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4fc07cf825fdfb94ea9144b061c9efc1
-      internalID: 1476979142
+      spriteID: 5d30c0d2c2565b0498ee8259da3d40af
+      internalID: 1726445757
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DashAir_Player_3
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 0
+        width: 384
+        height: 176
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 63d0c901059e1844597de33099bc0c20
+      internalID: 1318279102
       vertices: []
       indices: 
       edges: []
@@ -178,9 +199,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Jump_Player_0: -1137448150
-      Jump_Player_2: 1476979142
-      Jump_Player_1: -1183030590
+      DashAir_Player_2: 1726445757
+      DashAir_Player_0: 1738045054
+      DashAir_Player_3: 1318279102
+      DashAir_Player_1: 861678678
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
