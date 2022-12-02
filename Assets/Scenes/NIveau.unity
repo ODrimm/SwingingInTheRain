@@ -1168,6 +1168,77 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &731049264
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 731049266}
+  - component: {fileID: 731049265}
+  - component: {fileID: 731049267}
+  m_Layer: 0
+  m_Name: BossScene
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!61 &731049265
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 731049264}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
+--- !u!4 &731049266
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 731049264}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.71, y: -3.97, z: -0.25435373}
+  m_LocalScale: {x: 4.85, y: 5.08, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &731049267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 731049264}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b749c39bcf5c6e41a72d8675e8d606c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &779076382
 GameObject:
   m_ObjectHideFlags: 0
@@ -2879,7 +2950,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 519420031, guid: 03903b4e0415a144786e14bf27e36929, type: 3}
       propertyPath: field of view
-      value: 23
+      value: 47.99
       objectReference: {fileID: 0}
     - target: {fileID: 519420031, guid: 03903b4e0415a144786e14bf27e36929, type: 3}
       propertyPath: m_FocalLength
@@ -2899,7 +2970,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 519420032, guid: 03903b4e0415a144786e14bf27e36929, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.14285702
+      value: 7.1428576
       objectReference: {fileID: 0}
     - target: {fileID: 1392678660, guid: 03903b4e0415a144786e14bf27e36929, type: 3}
       propertyPath: m_FollowOffset.x
@@ -2907,11 +2978,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1392678660, guid: 03903b4e0415a144786e14bf27e36929, type: 3}
       propertyPath: m_FollowOffset.y
-      value: 0.02
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1634576527, guid: 03903b4e0415a144786e14bf27e36929, type: 3}
       propertyPath: m_Lens.FieldOfView
-      value: 23
+      value: 47.99
       objectReference: {fileID: 0}
     - target: {fileID: 1634576528, guid: 03903b4e0415a144786e14bf27e36929, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2919,7 +2990,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1634576528, guid: 03903b4e0415a144786e14bf27e36929, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.14285702
+      value: 7.1428576
       objectReference: {fileID: 0}
     - target: {fileID: 8957171108900597958, guid: 03903b4e0415a144786e14bf27e36929, type: 3}
       propertyPath: m_RootOrder
