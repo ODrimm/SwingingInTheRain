@@ -808,19 +808,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 519420031, guid: 03903b4e0415a144786e14bf27e36929, type: 3}
       propertyPath: field of view
-      value: 45
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 519420032, guid: 03903b4e0415a144786e14bf27e36929, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 42.789272
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 519420032, guid: 03903b4e0415a144786e14bf27e36929, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 17.69822
+      value: 7.1428576
       objectReference: {fileID: 0}
     - target: {fileID: 519420032, guid: 03903b4e0415a144786e14bf27e36929, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -77.47097
+      value: -77.071434
       objectReference: {fileID: 0}
     - target: {fileID: 1392678660, guid: 03903b4e0415a144786e14bf27e36929, type: 3}
       propertyPath: m_FollowOffset.y
@@ -828,7 +828,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1634576527, guid: 03903b4e0415a144786e14bf27e36929, type: 3}
       propertyPath: m_Lens.FieldOfView
-      value: 45
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 1634576528, guid: 03903b4e0415a144786e14bf27e36929, type: 3}
       propertyPath: m_LocalPosition.y
@@ -845,7 +845,7 @@ PrefabInstance:
     - target: {fileID: 7861808775926884747, guid: 03903b4e0415a144786e14bf27e36929, type: 3}
       propertyPath: m_BoundingShape2D
       value: 
-      objectReference: {fileID: 1267425081}
+      objectReference: {fileID: 0}
     - target: {fileID: 8957171108900597958, guid: 03903b4e0415a144786e14bf27e36929, type: 3}
       propertyPath: m_RootOrder
       value: 1

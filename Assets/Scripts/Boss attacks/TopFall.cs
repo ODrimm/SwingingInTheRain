@@ -10,6 +10,7 @@ public class TopFall : MonoBehaviour
     public Transform pos3;
     public Transform pos4;
     public float fallspeed = 5;
+    public float tpsBeforeFall = 0.5f;
     [Space(10)]
     [SerializeField] GameObject block;
     [Space(10)]
@@ -32,14 +33,7 @@ public class TopFall : MonoBehaviour
         posEmpty = Random.Range(0, 4);
         posList.Add(pos1); posList.Add(pos2); posList.Add(pos3); posList.Add(pos4);
 
-        for (int i = 0; i < posList.Count; i++)
-        {
-            if (posEmpty != i)
-            {
-                print("oui");
-                fallingBlocks.Add(BlockFall(posList[i]));
-            }
-        }
+        StartCoroutine(BlockSpawn());
     }
 
     // Start is called before the first frame update
@@ -70,6 +64,20 @@ public class TopFall : MonoBehaviour
         }
 
 
+    }
+
+    IEnumerator BlockSpawn()
+    {
+        yield return new WaitForSeconds(tpsBeforeFall);
+        for (int i = 0; i < posList.Count; i++)
+        {
+            if (posEmpty != i)
+            {
+                fallingBlocks.Add(BlockFall(posList[i]));
+            }
+        }
+
+        yield return null;
     }
 
     private GameObject BlockFall(Transform pos)
