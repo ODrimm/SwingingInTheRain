@@ -38,6 +38,8 @@ public class CharaMov : MonoBehaviour
 	public bool IsAttacking { get; private set; }
 	public bool BlockedMovement { get; private set; }
 
+	public bool IsGuard { get; private set; }
+
 	//Timers (also all fields, could be private and a method returning a bool could be used)
 	public float LastOnGroundTime { get; private set; }
 	public float LastOnWallTime { get; private set; }
@@ -692,7 +694,8 @@ public class CharaMov : MonoBehaviour
 
 		_shieldPoint.GetComponent<Collider2D>().enabled = true;
 		print(guardHealth);
-		if(guardHealth <= 0)
+		IsGuard = true;
+		if (guardHealth <= 0)
         {
 			GuardUp();
         }
@@ -701,6 +704,7 @@ public class CharaMov : MonoBehaviour
 	private void GuardUp()
     {
 		_shieldPoint.GetComponent<Collider2D>().enabled = false;
+		IsGuard = false;
 		IsAttacking = false;
 		BlockedMovement = false;
 
@@ -812,7 +816,7 @@ public class CharaMov : MonoBehaviour
 
 			if (extendHitObject.name == "Boss")
 			{
-				swingHitObject.GetComponent<Boss>().Damage(1);
+				extendHitObject.GetComponent<Boss>().Damage(1);
 			}
 		}
 
@@ -827,7 +831,7 @@ public class CharaMov : MonoBehaviour
 
 			if (extendHitObject.name == "Boss")
 			{
-				swingHitObject.GetComponent<Boss>().Damage(3);
+				extendHitObject.GetComponent<Boss>().Damage(3);
 			}
 		}
 

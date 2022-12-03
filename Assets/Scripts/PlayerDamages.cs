@@ -14,10 +14,12 @@ public class PlayerDamages : MonoBehaviour
 
     public SpriteRenderer sprite;
 
+    CharaMov charaMov;
+
     // Start is called before the first frame update
     void Start()
     {
-
+        charaMov = gameObject.GetComponent<CharaMov>();
     }
 
     // Update is called once per frame
@@ -36,7 +38,7 @@ public class PlayerDamages : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
 
-        if (collision.gameObject.tag == "smallHit" && canHit)
+        if (collision.gameObject.tag == "smallHit" && canHit && !charaMov.IsGuard)
         {
             playerHealth -= smallHitDamage;
             canHit = false;
