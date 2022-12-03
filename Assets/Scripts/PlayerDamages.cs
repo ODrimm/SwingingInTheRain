@@ -36,9 +36,8 @@ public class PlayerDamages : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
 
-        if (collision.gameObject.tag == "smallHit")
+        if (collision.gameObject.tag == "smallHit" && canHit)
         {
-            print("hit bon");
             playerHealth -= smallHitDamage;
             canHit = false;
             lastTimeHit = Time.time;

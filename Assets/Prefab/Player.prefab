@@ -550,6 +550,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1634576528}
   - component: {fileID: 1634576527}
+  - component: {fileID: 7861808775926884747}
   m_Layer: 0
   m_Name: CM vcam1
   m_TagString: Untagged
@@ -594,7 +595,7 @@ MonoBehaviour:
   m_LookAt: {fileID: 8957171108900597958}
   m_Follow: {fileID: 8957171108900597958}
   m_Lens:
-    FieldOfView: 47.99
+    FieldOfView: 30
     OrthographicSize: 5
     NearClipPlane: 0.3
     FarClipPlane: 1000
@@ -611,6 +612,21 @@ MonoBehaviour:
         m_Calls: []
   m_LegacyBlendHint: 0
   m_ComponentOwner: {fileID: 1392678659}
+--- !u!114 &7861808775926884747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1634576526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f453f694addf4275988fac205bc91968, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_BoundingShape2D: {fileID: 0}
+  m_Damping: 0
+  m_MaxWindowSize: -1
 --- !u!1 &8957171108606786484
 GameObject:
   m_ObjectHideFlags: 0
@@ -794,6 +810,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerHealth: 8
   smallHitDamage: 0
+  hitCooldown: 0.4
+  sprite: {fileID: 0}
 --- !u!50 &8957171108900597956
 Rigidbody2D:
   serializedVersion: 4
