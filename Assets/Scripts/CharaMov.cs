@@ -154,6 +154,7 @@ public class CharaMov : MonoBehaviour
 			trail.emitting = false;
 		}
 
+		anims.SetBool("Guard", IsGuard);
 
 		#region INPUT HANDLER
 		if (CanMove())
@@ -691,6 +692,7 @@ public class CharaMov : MonoBehaviour
 		BlockedMovement = true;
 		int guardHealth = Data.guardHealth;
 		//Anim
+
 
 		_shieldPoint.GetComponent<Collider2D>().enabled = true;
 		print(guardHealth);

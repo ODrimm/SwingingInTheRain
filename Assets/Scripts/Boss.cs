@@ -16,6 +16,8 @@ public class Boss : MonoBehaviour
     List<string> SpecialAttacks = new List<string>();
 
     GameObject currentAttack;
+
+    [SerializeField] SpriteRenderer bossSprite;
     
 
 
@@ -130,7 +132,16 @@ public class Boss : MonoBehaviour
     {
         //prend des dgts
         bossHealth -= damages;
-        print(bossHealth);
+        //StartCoroutine(DamageAnims());
+
+    }
+
+    IEnumerator DamageAnims()
+    {
+        bossSprite.color = new Color(94, 4, 4, 255);
+        yield return new WaitForSeconds(0.1f);
+        bossSprite.color = new Color(58,58,58,255);
+        yield return null;
     }
 }
 
